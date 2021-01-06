@@ -78,7 +78,15 @@ router.delete('/:id', (req, res) => {
   console.log('Delete route called with id of', id);
 
   // TODO - REPLACE BELOW WITH YOUR CODE
-  res.sendStatus(500);
+  const queryText = `DELETE FROM "books" WHERE "id" = $1;`;
+
+  pool.query(queryText, [id])
+    .then((result) => {
+      res.sendStatus(204);
+    }).catch((error) => {
+      console.log('error');
+      res.sendStatus(500);
+    })
 
 });
 
