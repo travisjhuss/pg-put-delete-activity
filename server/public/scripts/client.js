@@ -7,6 +7,7 @@ $(document).ready(function(){
 function addClickHandlers() {
   $('#submitBtn').on('click', handleSubmit);
   $('#bookShelf').on('click', '.deleteBtn', deleteBook);
+  $('#bookShelf').on('click', '.markReadBtn', markAsRead);
 
   // TODO - Add code for edit & delete buttons
 }
@@ -60,7 +61,7 @@ function renderBooks(books) {
     $tr.append(`<td>${book.title}</td>`);
     $tr.append(`<td>${book.author}</td>`);
     $tr.append(`<td>${book.status}</td>`);
-    $tr.append(`<td><button class="deleteBtn">Mark as Read</button></td>`);
+    $tr.append(`<td><button class="markReadBtn">Mark as Read</button></td>`);
     $tr.append(`<td><button class="deleteBtn">Delete</button></td>`);
     $('#bookShelf').append($tr);
   }
@@ -87,3 +88,48 @@ function deleteBook() {
 } // end deleteBook
 
 
+function markAsRead() {
+  console.log('clicked mark as read');
+  const id = $(this).closest('tr').data('id');
+  console.log(id);
+  const dataToSend = {
+      readStatus: 'read'
+  }
+  
+  $.ajax({
+      type: 'PUT',
+      url: `/books/${id}`,
+      data: dataToSend
+
+  }).then(function(response) {
+      console.log('updated');
+      refreshBooks();
+
+  }).catch(function(error) {
+      alert('error updating');
+  }) // end ajax
+
+} // end markAsRead
+
+
+
+function changeRank() {
+  // id for the url and where clause
+  const id = $(this).closest('tr').data('id');
+  // data for SET clause in UPDATE
+  const dataToSend = {
+          direction: $(this).text(),
+  }
+
+  $.ajax({
+      type: 'PUT',
+      url: `/musicLibrary/${id}`,
+      data: dataToSend
+  }).then(function(response) {
+      console.log('updated');
+      getMusicData();
+  }).catch(function(error) {
+      alert('error updating');
+  }) // end ajax
+
+} // end changeRank
