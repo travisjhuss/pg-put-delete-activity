@@ -111,25 +111,3 @@ function markAsRead() {
 
 } // end markAsRead
 
-
-
-function changeRank() {
-  // id for the url and where clause
-  const id = $(this).closest('tr').data('id');
-  // data for SET clause in UPDATE
-  const dataToSend = {
-          direction: $(this).text(),
-  }
-
-  $.ajax({
-      type: 'PUT',
-      url: `/musicLibrary/${id}`,
-      data: dataToSend
-  }).then(function(response) {
-      console.log('updated');
-      getMusicData();
-  }).catch(function(error) {
-      alert('error updating');
-  }) // end ajax
-
-} // end changeRank
