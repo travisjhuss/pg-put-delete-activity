@@ -48,8 +48,8 @@ x - Change the heading from Add Book to Edit Book
 x - The edit mode should also show a cancel button, which should switch back to add mode, clearing the inputs without saving data.
 
 When the submit button is clicked:
-- If the mode is add - do the original POST
-- If the mode is edit - send a PUT with the updated information
+x - If the mode is add - do the original POST
+x - If the mode is edit - send a PUT with the updated information
 
 ### Additional Features
 
