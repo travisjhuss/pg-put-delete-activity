@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function () {
   console.log('jQuery sourced.');
   refreshBooks();
   addClickHandlers();
@@ -8,6 +8,7 @@ function addClickHandlers() {
   $('#submitBtn').on('click', handleSubmit);
   $('#bookShelf').on('click', '.deleteBtn', deleteBook);
   $('#bookShelf').on('click', '.markReadBtn', markAsRead);
+  $('#bookShelf').on('click', '.editBtn', editBook);
 
   // TODO - Add code for edit & delete buttons
 }
@@ -26,13 +27,13 @@ function addBook(bookToAdd) {
     type: 'POST',
     url: '/books',
     data: bookToAdd,
-    }).then(function(response) {
-      console.log('Response from server.', response);
-      refreshBooks();
-    }).catch(function(error) {
-      console.log('Error in POST', error)
-      alert('Unable to add book at this time. Please try again later.');
-    });
+  }).then(function (response) {
+    console.log('Response from server.', response);
+    refreshBooks();
+  }).catch(function (error) {
+    console.log('Error in POST', error)
+    alert('Unable to add book at this time. Please try again later.');
+  });
 }
 
 // refreshBooks will get all books from the server and render to page
@@ -40,10 +41,10 @@ function refreshBooks() {
   $.ajax({
     type: 'GET',
     url: '/books'
-  }).then(function(response) {
+  }).then(function (response) {
     console.log(response);
     renderBooks(response);
-  }).catch(function(error){
+  }).catch(function (error) {
     console.log('error in GET', error);
   });
 }
@@ -53,7 +54,7 @@ function refreshBooks() {
 function renderBooks(books) {
   $('#bookShelf').empty();
 
-  for(let i = 0; i < books.length; i += 1) {
+  for (let i = 0; i < books.length; i += 1) {
     let book = books[i];
     // For each book, append a new row to our table
     let $tr = $(`<tr data-id=${book.id}></tr>`);
@@ -63,6 +64,7 @@ function renderBooks(books) {
     $tr.append(`<td>${book.status}</td>`);
     $tr.append(`<td><button class="markReadBtn">Mark as Read</button></td>`);
     $tr.append(`<td><button class="deleteBtn">Delete</button></td>`);
+    $tr.append(`<td><button class="editBtn">Edit</button></td>`);
     $('#bookShelf').append($tr);
   }
 }
@@ -70,21 +72,21 @@ function renderBooks(books) {
 // delete book from database
 
 function deleteBook() {
-    console.log('clicked delete');
-    const id = $(this).closest('tr').data('id');
-    console.log(id);
+  console.log('clicked delete');
+  const id = $(this).closest('tr').data('id');
+  console.log(id);
 
-    $.ajax({
-        type: 'DELETE',
-        url: `/books/${id}`
+  $.ajax({
+    type: 'DELETE',
+    url: `/books/${id}`
 
-    }).then(function(response) {
-        refreshBooks();
-    }).catch(function(error) {
-        alert('error in delete');
-    }); // end ajax
-    
-    
+  }).then(function (response) {
+    refreshBooks();
+  }).catch(function (error) {
+    alert('error in delete');
+  }); // end ajax
+
+
 } // end deleteBook
 
 
@@ -93,21 +95,42 @@ function markAsRead() {
   const id = $(this).closest('tr').data('id');
   console.log(id);
   const dataToSend = {
-      readStatus: 'read'
+    readStatus: 'read'
   }
-  
+
   $.ajax({
-      type: 'PUT',
-      url: `/books/${id}`,
-      data: dataToSend
+    type: 'PUT',
+    url: `/books/${id}`,
+    data: dataToSend
 
-  }).then(function(response) {
-      console.log('updated');
-      refreshBooks();
+  }).then(function (response) {
+    console.log('updated');
+    refreshBooks();
 
-  }).catch(function(error) {
-      alert('error updating');
+  }).catch(function (error) {
+    alert('error updating');
   }) // end ajax
 
 } // end markAsRead
 
+let mode = 'add';
+
+let bookId;
+
+
+function editBook() {
+
+  console.log('clicked edit');
+  const id = $(this).closest('tr').data('id');
+  bookId = id;
+  mode = 'edit';
+  const currentRow = $(this).closest('tr');
+  const bookTitle = currentRow.find("td:eq(0)").text();
+  const bookAuthor = currentRow.find("td:eq(1)").text();
+
+  console.log(bookTitle, bookAuthor);
+  $('#heading').empty().append('Edit Book <button class="cancelBtn">Cancel</button>');
+  $('#author').val(bookAuthor);
+  $('#title').val(bookTitle);
+
+} // end editBook
