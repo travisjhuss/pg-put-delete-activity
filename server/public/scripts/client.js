@@ -23,18 +23,48 @@ function handleSubmit() {
 
 // adds a book to the database
 function addBook(bookToAdd) {
-  $.ajax({
-    type: 'POST',
-    url: '/books',
-    data: bookToAdd,
-  }).then(function (response) {
-    console.log('Response from server.', response);
-    refreshBooks();
-  }).catch(function (error) {
-    console.log('Error in POST', error)
-    alert('Unable to add book at this time. Please try again later.');
-  });
-}
+
+  // if in add mode, run post
+  if (mode === 'add') {
+
+    $.ajax({
+      type: 'POST',
+      url: '/books',
+      data: bookToAdd,
+    }).then(function (response) {
+      console.log('Response from server.', response);
+      $('#author').val('');
+      $('#title').val('');
+      refreshBooks();
+    }).catch(function (error) {
+      console.log('Error in POST', error)
+      alert('Unable to add book at this time. Please try again later.');
+    });
+  } else if (mode === 'edit') {
+    // if in edit mode, run put
+    console.log('in edit mode');
+    
+    $.ajax({
+      type: 'PUT',
+      url: `/books/edit/${bookId}`,
+      data: bookToAdd
+
+    }).then(function (response) {
+      console.log('updated');
+      $('#author').val('');
+      $('#title').val('');
+      mode = 'add';
+      refreshBooks();
+
+    }).catch(function (error) {
+      alert('error updating');
+    }) // end ajax
+  } else {
+    alert('something is broken, and its not just this country');
+    
+  }
+
+} // ene addBook
 
 // refreshBooks will get all books from the server and render to page
 function refreshBooks() {
@@ -121,8 +151,7 @@ let bookId;
 function editBook() {
 
   console.log('clicked edit');
-  const id = $(this).closest('tr').data('id');
-  bookId = id;
+  bookId = $(this).closest('tr').data('id');
   mode = 'edit';
   const currentRow = $(this).closest('tr');
   const bookTitle = currentRow.find("td:eq(0)").text();

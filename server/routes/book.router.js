@@ -60,13 +60,13 @@ router.put('/:id', (req, res) => {
   }
 
   pool.query(queryText, [id])
-        .then((result) => {
-            res.sendStatus(200);
+    .then((result) => {
+      res.sendStatus(200);
 
-        }).catch((error) => {
-            console.log(error);
-            res.sendStatus(500);
-        })
+    }).catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    })
 
 });
 
@@ -89,5 +89,31 @@ router.delete('/:id', (req, res) => {
     })
 
 });
+
+// edit put route
+router.put('/edit/:id', (req, res) => {
+  let book = req.body; // Book with updated content
+  let id = req.params.id; // id of the book to update
+
+  console.log(`Updating book ${id}`, book);
+
+  let queryText = `
+    UPDATE "books"
+    SET "author" = $2, "title" = $3
+    WHERE "id" = $1;`;
+
+  
+
+  pool.query(queryText, [id, book.author, book.title])
+    .then((result) => {
+      res.sendStatus(200);
+
+    }).catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    })
+
+});
+
 
 module.exports = router;
