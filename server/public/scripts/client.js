@@ -9,9 +9,20 @@ function addClickHandlers() {
   $('#bookShelf').on('click', '.deleteBtn', deleteBook);
   $('#bookShelf').on('click', '.markReadBtn', markAsRead);
   $('#bookShelf').on('click', '.editBtn', editBook);
+  $(document).on('click', '.cancelBtn', clearFields);
 
   // TODO - Add code for edit & delete buttons
 }
+
+// clear inputs and make sure in add mode
+function clearFields() {
+  $('#heading').empty().append('Add New Book');
+  $('#author').val('');
+  $('#title').val('');
+  mode = 'add';
+  refreshBooks();
+
+} // end clearFields
 
 function handleSubmit() {
   console.log('Submit button clicked.');
@@ -43,7 +54,7 @@ function addBook(bookToAdd) {
   } else if (mode === 'edit') {
     // if in edit mode, run put
     console.log('in edit mode');
-    
+
     $.ajax({
       type: 'PUT',
       url: `/books/edit/${bookId}`,
@@ -53,6 +64,7 @@ function addBook(bookToAdd) {
       console.log('updated');
       $('#author').val('');
       $('#title').val('');
+      $('#heading').empty().append('Add New Book');
       mode = 'add';
       refreshBooks();
 
@@ -61,7 +73,7 @@ function addBook(bookToAdd) {
     }) // end ajax
   } else {
     alert('something is broken, and its not just this country');
-    
+
   }
 
 } // ene addBook
